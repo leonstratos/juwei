@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="专业的家庭药箱管理工具，药品管理、过期预警、用药咨询">
+    <meta name="theme-color" content="#ff758c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="家庭药箱">
+    <title>家庭药箱管理家</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v20M2 12h20"/>
+                    <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <h1>家庭药箱管理家</h1>
+            </div>
+            <nav>
+                <button class="nav-btn active" data-page="dashboard">首页</button>
+                <button class="nav-btn" data-page="medicine">药箱管理</button>
+                <button class="nav-btn" data-page="alert">过期预警</button>
+                <button class="nav-btn" data-page="consult">用药咨询</button>
+            </nav>
+        </header>
+
+        <main>
+            <section id="dashboard" class="page active">
+                <div class="welcome-card">
+                    <h2>欢迎使用家庭药箱管理家</h2>
+                    <p>让用药更安全、更省心</p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                <path d="M9 12h6M12 9v6"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-medicine">0</h3>
+                            <p>药品总数</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="8" x2="12" y2="12"/>
+                                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="expiring-soon">0</h3>
+                            <p>即将过期</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                            </svg>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="expired">0</h3>
+                            <p>已过期</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <h3>快捷操作</h3>
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="switchPage('medicine'); setTimeout(openAddModal, 300);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                <path d="M9 12h6M12 9v6"/>
+                            </svg>
+                            添加药品
+                        </button>
+                        <button class="action-btn" onclick="switchPage('alert')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                <line x1="12" y1="9" x2="12" y2="13"/>
+                                <line x1="12" y1="17" x2="12.01" y2="17"/>
+                            </svg>
+                            查看预警
+                        </button>
+                        <button class="action-btn" onclick="switchPage('consult')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                                <line x1="12" y1="17" x2="12.01" y2="17"/>
+                            </svg>
+                            用药咨询
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="medicine" class="page">
+                <div class="page-header">
+                    <h2>药箱管理</h2>
+                    <button class="btn-primary" onclick="openAddModal()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M9 12h6M12 9v6"/>
+                        </svg>
+                        添加药品
+                    </button>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="medicine-search" placeholder="搜索药品名称、症状、分类...">
+                </div>
+                <div class="filter-bar">
+                    <select id="category-filter">
+                        <option value="">全部分类</option>
+                        <option value="感冒发烧">感冒发烧</option>
+                        <option value="肠胃不适">肠胃不适</option>
+                        <option value="外伤用药">外伤用药</option>
+                        <option value="慢性病药">慢性病药</option>
+                        <option value="维生素">维生素</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                <div class="medicine-grid" id="medicine-list"></div>
+                <div class="empty-state" id="medicine-empty" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <path d="M9 12h6M12 9v6"/>
+                    </svg>
+                    <h3>药箱空空如也</h3>
+                    <p>点击"添加药品"开始管理您的家庭药箱</p>
+                </div>
+            </section>
+
+            <section id="alert" class="page">
+                <div class="page-header">
+                    <h2>过期预警</h2>
+                </div>
+                <div class="alert-tabs">
+                    <button class="alert-tab active" data-alert="expiring">即将过期 (30天内)</button>
+                    <button class="alert-tab" data-alert="expired">已过期</button>
+                </div>
+                <div id="expiring-list" class="alert-list"></div>
+                <div id="expired-list" class="alert-list" style="display: none;"></div>
+                <div class="empty-state" id="alert-empty" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    <h3>一切正常</h3>
+                    <p>目前没有需要关注的药品</p>
+                </div>
+            </section>
+
+            <section id="consult" class="page">
+                <div class="page-header">
+                    <h2>用药咨询</h2>
+                </div>
+                <div class="consult-tabs">
+                    <button class="consult-tab active" data-consult="symptom">症状查询</button>
+                    <button class="consult-tab" data-consult="interaction">药物相互作用</button>
+                    <button class="consult-tab" data-consult="taboo">用药禁忌</button>
+                </div>
+                
+                <div id="symptom-consult" class="consult-content">
+                    <div class="consult-box">
+                        <h3>您有什么症状？</h3>
+                        <div class="symptom-tags">
+                            <span class="symptom-tag" data-symptom="头痛">头痛</span>
+                            <span class="symptom-tag" data-symptom="发烧">发烧</span>
+                            <span class="symptom-tag" data-symptom="咳嗽">咳嗽</span>
+                            <span class="symptom-tag" data-symptom="腹泻">腹泻</span>
+                            <span class="symptom-tag" data-symptom="胃痛">胃痛</span>
+                            <span class="symptom-tag" data-symptom="过敏">过敏</span>
+                            <span class="symptom-tag" data-symptom="失眠">失眠</span>
+                            <span class="symptom-tag" data-symptom="肌肉酸痛">肌肉酸痛</span>
+                        </div>
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label>或者输入其他症状</label>
+                            <input type="text" id="custom-symptom" placeholder="例如：流鼻涕、喉咙痛等...">
+                        </div>
+                        <button class="btn-primary" onclick="searchSymptom()" style="margin-top: 10px;">查询推荐用药</button>
+                    </div>
+                    <div id="symptom-result" class="consult-result"></div>
+                </div>
+
+                <div id="interaction-consult" class="consult-content" style="display: none;">
+                    <div class="consult-box">
+                        <h3>查询药物相互作用</h3>
+                        <div class="form-group">
+                            <label>第一种药物</label>
+                            <select id="medicine-1-select" onchange="toggleCustomInput(1)">
+                                <option value="">从药箱选择...</option>
+                                <option value="custom">手动输入...</option>
+                            </select>
+                            <input type="text" id="medicine-1-custom" placeholder="输入药物名称" style="display: none; margin-top: 10px;">
+                        </div>
+                        <div style="text-align: center; font-size: 28px; margin: 10px 0; color: #ff758c;">+</div>
+                        <div class="form-group">
+                            <label>第二种药物</label>
+                            <select id="medicine-2-select" onchange="toggleCustomInput(2)">
+                                <option value="">从药箱选择...</option>
+                                <option value="custom">手动输入...</option>
+                            </select>
+                            <input type="text" id="medicine-2-custom" placeholder="输入药物名称" style="display: none; margin-top: 10px;">
+                        </div>
+                        <button class="btn-primary" onclick="checkInteraction()" style="margin-top: 10px;">检查相互作用</button>
+                    </div>
+                    <div id="interaction-result" class="consult-result"></div>
+                </div>
+
+                <div id="taboo-consult" class="consult-content" style="display: none;">
+                    <div class="consult-box">
+                        <h3>用药禁忌查询</h3>
+                        <div class="form-group">
+                            <label>选择或输入药物</label>
+                            <select id="taboo-medicine-select" onchange="toggleTabooCustomInput()">
+                                <option value="">从药箱选择...</option>
+                                <option value="custom">手动输入...</option>
+                            </select>
+                            <input type="text" id="taboo-medicine-custom" placeholder="输入药物名称" style="display: none; margin-top: 10px;">
+                        </div>
+                        <button class="btn-primary" onclick="checkTaboo()" style="margin-top: 10px;">查看禁忌</button>
+                    </div>
+                    <div id="taboo-result" class="consult-result"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="modal" id="add-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>添加药品</h2>
+                <button class="close-btn" onclick="closeAddModal()">×</button>
+            </div>
+            <form id="add-medicine-form">
+                <div class="ocr-section" onclick="document.getElementById('image-upload').click()">
+                    <input type="file" id="image-upload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                    <div class="ocr-icon">📷</div>
+                    <h4>拍照识别药品信息</h4>
+                    <p>上传药品包装盒照片，自动识别药品名称、保质期等信息</p>
+                    <button type="button" class="ocr-btn" onclick="event.stopPropagation(); document.getElementById('image-upload').click()">
+                        📸 选择照片或拍照
+                    </button>
+                    <div class="ocr-loading" id="ocr-loading">
+                        <div class="spinner"></div>
+                        <span>正在识别中...</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>药品名称 *</label>
+                    <input type="text" id="med-name" required placeholder="例如：布洛芬缓释胶囊">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>分类</label>
+                        <select id="med-category">
+                            <option value="感冒发烧">感冒发烧</option>
+                            <option value="肠胃不适">肠胃不适</option>
+                            <option value="外伤用药">外伤用药</option>
+                            <option value="慢性病药">慢性病药</option>
+                            <option value="维生素">维生素</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>保质期至 *</label>
+                        <input type="date" id="med-expiry" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>规格</label>
+                        <input type="text" id="med-spec" placeholder="例如：0.3g×20粒">
+                    </div>
+                    <div class="form-group">
+                        <label>数量</label>
+                        <input type="number" id="med-quantity" placeholder="例如：1" min="1">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>适应症</label>
+                    <input type="text" id="med-indication" placeholder="用于缓解轻至中度疼痛、感冒发热等">
+                </div>
+                <div class="form-group">
+                    <label>用法用量</label>
+                    <input type="text" id="med-usage" placeholder="口服，成人一次1粒，一日2次">
+                </div>
+                <div class="form-group">
+                    <label>禁忌</label>
+                    <textarea id="med-taboo" rows="2" placeholder="对本品过敏者禁用，孕妇及哺乳期妇女禁用..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>备注</label>
+                    <textarea id="med-notes" rows="2" placeholder="其他需要记录的信息"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeAddModal()">取消</button>
+                    <button type="submit" class="btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="detail-title">药品详情</h2>
+                <button class="close-btn" onclick="closeDetailModal()">×</button>
+            </div>
+            <div id="detail-content"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((registration) => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch((err) => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

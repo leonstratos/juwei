@@ -1,0 +1,33 @@
+{
+  "name": "家庭药箱管理家",
+  "short_name": "家庭药箱",
+  "description": "专业的家庭药箱管理工具，药品管理、过期预警、用药咨询",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fff5f5",
+  "theme_color": "#ff758c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/maskable-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
